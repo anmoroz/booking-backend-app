@@ -20,5 +20,8 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    App\Security\JwtTokenProvider:
+        public: true
+        arguments:
+            $secretKey: '%env(JWT_SECRET_KEY)%'
+            $validTime: '%env(JWT_VALID_TIME)%'
