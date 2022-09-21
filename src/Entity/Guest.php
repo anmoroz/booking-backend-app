@@ -10,14 +10,16 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Core\Entity\EntityInterface;
-use App\Repository\PropertyRepository;
+use App\Repository\GuestRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use DateTimeInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ORM\Entity(repositoryClass: PropertyRepository::class)]
-class Property implements EntityInterface
+#[ORM\Entity(repositoryClass: GuestRepository::class)]
+class Guest implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -25,19 +27,27 @@ class Property implements EntityInterface
     #[Groups(["show", "list"])]
     private ?int $id = null;
 
+    #[ORM\Column(length: 12, unique: true)]
+    #[Groups(["show", "list"])]
+    private ?string $phone = null;
+
     #[ORM\Column(length: 255)]
     #[Groups(["show", "list"])]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(type: Types::TEXT)]
     #[Groups(["show", "list"])]
-    private ?string $address = null;
+    private ?string $note = null;
 
-    #[ORM\ManyToOne(inversedBy: 'properties')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(["show", "list"])]
+    private ?DateTimeInterface $createdAt = null;
 
-    #[ORM\OneToMany(mappedBy: 'property', targetEntity: Booking::class, orphanRemoval: true)]
+    #[ORM\Column]
+    #[Groups(["show", "list"])]
+    private bool $banned = false;
+
+    #[ORM\OneToMany(mappedBy: 'guest', targetEntity: Booking::class)]
     private Collection $bookings;
 
     public function __construct()
@@ -48,6 +58,18 @@ class Property implements EntityInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(string $phone): self
+    {
+        $this->phone = $phone;
+
+        return $this;
     }
 
     public function getName(): ?string
@@ -62,29 +84,49 @@ class Property implements EntityInterface
         return $this;
     }
 
-    public function getAddress(): ?string
+    public function getNote(): ?string
     {
-        return $this->address;
+        return $this->note;
     }
 
-    public function setAddress(?string $address): self
+    public function setNote(string $note): self
     {
-        $this->address = $address;
+        $this->note = $note;
 
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getCreatedAt(): ?DateTimeInterface
     {
-        return $this->user;
+        return $this->createdAt;
     }
 
-    public function setUser(?User $user): self
+    public function setCreatedAtNow(): self
     {
-        $this->user = $user;
+        $this->createdAt = new \DateTime();
 
         return $this;
     }
+
+    public function setCreatedAt(DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function isBanned(): ?bool
+    {
+        return $this->banned;
+    }
+
+    public function setBanned(bool $banned): self
+    {
+        $this->banned = $banned;
+
+        return $this;
+    }
+
 
     /**
      * @return Collection<int, Booking>
@@ -98,7 +140,7 @@ class Property implements EntityInterface
     {
         if (!$this->bookings->contains($booking)) {
             $this->bookings->add($booking);
-            $booking->setProperty($this);
+            $booking->setGuest($this);
         }
 
         return $this;
@@ -108,8 +150,8 @@ class Property implements EntityInterface
     {
         if ($this->bookings->removeElement($booking)) {
             // set the owning side to null (unless already changed)
-            if ($booking->getProperty() === $this) {
-                $booking->setProperty(null);
+            if ($booking->getGuest() === $this) {
+                $booking->setGuest(null);
             }
         }
 

@@ -9,13 +9,14 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Core\Entity\EntityInterface;
 use App\Repository\RefreshTokenRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use DateTimeInterface;
 
 #[ORM\Entity(repositoryClass: RefreshTokenRepository::class)]
-class RefreshToken
+class RefreshToken implements EntityInterface
 {
     public const LIFE_TIME_DAYS = 10;
 

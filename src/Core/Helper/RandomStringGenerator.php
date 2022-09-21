@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace App\Helper;
+namespace App\Core\Helper;
 
 use Exception;
 

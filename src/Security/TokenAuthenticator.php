@@ -32,16 +32,18 @@ class TokenAuthenticator extends AbstractAuthenticator
      */
     public function supports(Request $request): ?bool
     {
-        if ($request->headers->has(self::HEADER_AUTH_TOKEN)) {
+        if (!$request->headers->has(self::HEADER_AUTH_TOKEN)) {
 
             return false;
         }
 
         $authorizationValue = trim((string) $request->headers->get(self::HEADER_AUTH_TOKEN));
+
         if (
             strlen($authorizationValue) === 0
             && substr($authorizationValue, 0, strlen(self::TOKEN_PREFIX)) !== self::TOKEN_PREFIX
         ) {
+
             return false;
         }
 

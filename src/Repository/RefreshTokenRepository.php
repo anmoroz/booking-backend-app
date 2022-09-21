@@ -9,44 +9,26 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Helper\RandomStringGenerator;
+use App\Core\Repository\EntityRepositoryAbstract;
+use App\Core\Helper\RandomStringGenerator;
 use App\Entity\User;
 use App\Entity\RefreshToken;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use DateTime;
 
 /**
- * @extends ServiceEntityRepository<RefreshToken>
+ * @extends EntityRepositoryAbstract<RefreshToken>
  *
  * @method RefreshToken|null find($id, $lockMode = null, $lockVersion = null)
  * @method RefreshToken|null findOneBy(array $criteria, array $orderBy = null)
  * @method RefreshToken[]    findAll()
  * @method RefreshToken[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class RefreshTokenRepository extends ServiceEntityRepository
+class RefreshTokenRepository extends EntityRepositoryAbstract
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, RefreshToken::class);
-    }
-
-    public function add(RefreshToken $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(RefreshToken $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
     }
 
     /**
