@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Booking application project.
+ * This file is part of the Reservation application project.
  *
  * https://github.com/anmoroz
  */
@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Core\Entity\EntityInterface;
-use App\Repository\GuestRepository;
+use App\Repository\ContactRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -18,8 +18,9 @@ use Doctrine\ORM\Mapping as ORM;
 use DateTimeInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ORM\Entity(repositoryClass: GuestRepository::class)]
-class Guest implements EntityInterface
+#[ORM\Entity(repositoryClass: ContactRepository::class)]
+#[ORM\Index(name: "CONTACT_NAME_IDX", columns: ["name"])]
+class Contact implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -37,22 +38,22 @@ class Guest implements EntityInterface
 
     #[ORM\Column(type: Types::TEXT)]
     #[Groups(["show", "list"])]
-    private ?string $note = null;
+    private string $note = '';
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Groups(["show", "list"])]
     private ?DateTimeInterface $createdAt = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: Types::BOOLEAN)]
     #[Groups(["show", "list"])]
-    private bool $banned = false;
+    private bool $isBanned = false;
 
-    #[ORM\OneToMany(mappedBy: 'guest', targetEntity: Booking::class)]
-    private Collection $bookings;
+    #[ORM\OneToMany(mappedBy: 'contact', targetEntity: Reservation::class)]
+    private Collection $reservations;
 
     public function __construct()
     {
-        $this->bookings = new ArrayCollection();
+        $this->reservations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -84,7 +85,7 @@ class Guest implements EntityInterface
         return $this;
     }
 
-    public function getNote(): ?string
+    public function getNote(): string
     {
         return $this->note;
     }
@@ -115,43 +116,39 @@ class Guest implements EntityInterface
         return $this;
     }
 
-    public function isBanned(): ?bool
+    public function isBanned(): bool
     {
-        return $this->banned;
+        return $this->isBanned;
     }
 
-    public function setBanned(bool $banned): self
+    public function setIsBanned(bool $isBanned): self
     {
-        $this->banned = $banned;
+        $this->isBanned = $isBanned;
 
         return $this;
     }
 
-
-    /**
-     * @return Collection<int, Booking>
-     */
-    public function getBookings(): Collection
+    public function getReservations(): Collection
     {
-        return $this->bookings;
+        return $this->reservations;
     }
 
-    public function addBooking(Booking $booking): self
+    public function addReservation(Reservation $reservation): self
     {
-        if (!$this->bookings->contains($booking)) {
-            $this->bookings->add($booking);
-            $booking->setGuest($this);
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations->add($reservation);
+            $reservation->setContact($this);
         }
 
         return $this;
     }
 
-    public function removeBooking(Booking $booking): self
+    public function removeReservation(Reservation $reservation): self
     {
-        if ($this->bookings->removeElement($booking)) {
+        if ($this->reservations->removeElement($reservation)) {
             // set the owning side to null (unless already changed)
-            if ($booking->getGuest() === $this) {
-                $booking->setGuest(null);
+            if ($reservation->getContact() === $this) {
+                $reservation->setContact(null);
             }
         }
 

@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Booking application project.
+ * This file is part of the Reservation application project.
  *
  * https://github.com/anmoroz
  */
@@ -32,7 +32,7 @@ class PaginatedRequestConfiguration
             $page = Page::DEFAULT_CURRENT_PAGE;
         }
 
-        if ($perPage > Page::MAX_PER_PAGE || $perPage < 0) {
+        if ($perPage !== -1 && ($perPage > Page::MAX_PER_PAGE || $perPage < 0)) {
             $perPage = Page::DEFAULT_PER_PAGE;
         }
 

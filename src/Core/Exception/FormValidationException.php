@@ -1,21 +1,21 @@
 <?php
 /*
- * This file is part of the Booking application project.
+ * This file is part of the Reservation application project.
  *
  * https://github.com/anmoroz
  */
 
 declare(strict_types=1);
 
-namespace App\Exception;
+namespace App\Core\Exception;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
-class ValidationException extends BadRequestHttpException
+class FormValidationException extends BadRequestHttpException
 {
-    protected array $validationErrors = [];
+    private array $validationErrors = [];
 
     /**
      * @param array $validationErrors

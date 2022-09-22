@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Booking application project.
+ * This file is part of the Reservation application project.
  *
  * https://github.com/anmoroz
  */
@@ -51,7 +51,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
     #[ORM\Column(type: Types::TEXT)]
     private string $note = '';
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Property::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Room::class, orphanRemoval: true)]
     private Collection $properties;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: RefreshToken::class, orphanRemoval: true)]
@@ -180,14 +180,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
     }
 
     /**
-     * @return Collection<int, Property>
+     * @return Collection<int, Room>
      */
     public function getProperties(): Collection
     {
         return $this->properties;
     }
 
-    public function addProperty(Property $property): self
+    public function addProperty(Room $property): self
     {
         if (!$this->properties->contains($property)) {
             $this->properties->add($property);
@@ -197,7 +197,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
         return $this;
     }
 
-    public function removeProperty(Property $property): self
+    public function removeProperty(Room $property): self
     {
         if ($this->properties->removeElement($property)) {
             // set the owning side to null (unless already changed)

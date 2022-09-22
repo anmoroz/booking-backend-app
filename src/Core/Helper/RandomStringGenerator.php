@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Booking application project.
+ * This file is part of the Reservation application project.
  *
  * https://github.com/anmoroz
  */

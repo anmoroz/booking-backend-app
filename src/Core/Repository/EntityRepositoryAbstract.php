@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Booking application project.
+ * This file is part of the Reservation application project.
  *
  * https://github.com/anmoroz
  */
@@ -22,6 +22,13 @@ abstract class EntityRepositoryAbstract extends ServiceEntityRepository implemen
 {
     public const MAIN_ALIAS = 'o';
 
+    /**
+     * @param Page $page
+     * @param array $criteria
+     * @param array $sorting
+     * @param QueryBuilder|null $queryBuilder
+     * @return PaginatorInterface
+     */
     public function createPaginator(
         Page $page,
         array $criteria = [],
@@ -39,6 +46,10 @@ abstract class EntityRepositoryAbstract extends ServiceEntityRepository implemen
         return new Paginator($queryBuilder->getQuery(), $page);
     }
 
+    /**
+     * @param PaginatedRequestConfiguration $paginatedRequest
+     * @return PaginatorInterface
+     */
     public function findAllByPaginatedRequest(
         PaginatedRequestConfiguration $paginatedRequest
     ): PaginatorInterface
@@ -55,7 +66,7 @@ abstract class EntityRepositoryAbstract extends ServiceEntityRepository implemen
      * @param $indexBy
      * @return QueryBuilder
      */
-    private function createQueryBuilderWithMainAlias($indexBy = null): QueryBuilder
+    public function createQueryBuilderWithMainAlias($indexBy = null): QueryBuilder
     {
         return $this->createQueryBuilder(self::MAIN_ALIAS, $indexBy);
     }

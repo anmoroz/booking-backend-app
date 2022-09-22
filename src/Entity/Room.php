@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Booking application project.
+ * This file is part of the Reservation application project.
  *
  * https://github.com/anmoroz
  */
@@ -10,14 +10,14 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Core\Entity\EntityInterface;
-use App\Repository\PropertyRepository;
+use App\Repository\RoomRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ORM\Entity(repositoryClass: PropertyRepository::class)]
-class Property implements EntityInterface
+#[ORM\Entity(repositoryClass: RoomRepository::class)]
+class Room implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -33,16 +33,16 @@ class Property implements EntityInterface
     #[Groups(["show", "list"])]
     private ?string $address = null;
 
-    #[ORM\ManyToOne(inversedBy: 'properties')]
+    #[ORM\ManyToOne(inversedBy: 'rooms')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\OneToMany(mappedBy: 'property', targetEntity: Booking::class, orphanRemoval: true)]
-    private Collection $bookings;
+    #[ORM\OneToMany(mappedBy: 'room', targetEntity: Reservation::class, orphanRemoval: true)]
+    private Collection $reservations;
 
     public function __construct()
     {
-        $this->bookings = new ArrayCollection();
+        $this->reservations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -87,29 +87,29 @@ class Property implements EntityInterface
     }
 
     /**
-     * @return Collection<int, Booking>
+     * @return Collection<int, Reservation>
      */
-    public function getBookings(): Collection
+    public function getReservations(): Collection
     {
-        return $this->bookings;
+        return $this->reservations;
     }
 
-    public function addBooking(Booking $booking): self
+    public function addReservation(Reservation $reservation): self
     {
-        if (!$this->bookings->contains($booking)) {
-            $this->bookings->add($booking);
-            $booking->setProperty($this);
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations->add($reservation);
+            $reservation->setRoom($this);
         }
 
         return $this;
     }
 
-    public function removeBooking(Booking $booking): self
+    public function removeReservation(Reservation $reservation): self
     {
-        if ($this->bookings->removeElement($booking)) {
+        if ($this->reservations->removeElement($reservation)) {
             // set the owning side to null (unless already changed)
-            if ($booking->getProperty() === $this) {
-                $booking->setProperty(null);
+            if ($reservation->getRoom() === $this) {
+                $reservation->setRoom(null);
             }
         }
 

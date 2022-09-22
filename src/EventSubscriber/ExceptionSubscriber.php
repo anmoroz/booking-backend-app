@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Booking application project.
+ * This file is part of the Reservation application project.
  *
  * https://github.com/anmoroz
  */
@@ -9,7 +9,8 @@ declare(strict_types=1);
 
 namespace App\EventSubscriber;
 
-use App\Exception\ValidationException;
+use App\Core\Exception\FormValidationException;
+use App\Core\Exception\ValidationException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -65,6 +66,8 @@ class ExceptionSubscriber implements EventSubscriberInterface
         }
 
         if ($throwable instanceof ValidationException) {
+            $data['message'] = $throwable->getMessage();
+        } elseif ($throwable instanceof FormValidationException) {
             $data['message'] = $throwable->getValidationErrors();
         }
 

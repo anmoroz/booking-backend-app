@@ -9,15 +9,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class UserCredentials
 {
-    /**
-     * @Assert\NotBlank(message="Поле не должно иметь пустое значение")
-     * @Assert\Email(message="Поле должно содержать валидное значение электронного адреса")
-     */
+    #[Assert\NotBlank(message: "Поле не должно иметь пустое значение")]
+    #[Assert\Email(message: "Поле должно содержать валидное значение электронного адреса")]
     private string $email;
 
-    /**
-     * @Assert\NotBlank(message="Поле не должно иметь пустое значение")
-     */
+    #[Assert\NotBlank(message: "Поле не должно иметь пустое значение")]
     private string $password;
 
     /**
