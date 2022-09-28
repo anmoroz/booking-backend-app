@@ -63,20 +63,23 @@ class ReservationService
         );
 
         $contactDetails = $reservationDetails->getContactDetails();
-        if (is_null($contactDetails)) {
+        if ($reservationDetails->getAdults() > 0 && is_null($contactDetails)) {
             throw new ValidationException('Не указано контактное лицо');
         }
 
-        $contact = $this->contactRepository->findOneByPhone($contactDetails->getPhone());
-        if (!$contact) {
-            throw new ValidationException('Контактное лицо с таким телефоном не найдено');
+        if ($contactDetails) {
+            $contact = $this->contactRepository->findOneByPhone($contactDetails->getPhone());
+            if (!$contact) {
+                throw new ValidationException('Контактное лицо с таким телефоном не найдено');
+            }
+
+            $contact
+                ->setPhone($contactDetails->getPhone())
+                ->setName($contactDetails->getName());
         }
 
-        $contact
-            ->setPhone($contactDetails->getPhone())
-            ->setName($contactDetails->getName());
 
-        $this->updateReservationAttributes($reservation, $reservationDetails, $contact);
+        $this->updateReservationAttributes($reservation, $reservationDetails, $contact ?? null);
 
         $this->reservationRepository->add($reservation, true);
     }
@@ -151,12 +154,12 @@ class ReservationService
         ?Reservation $reservation = null
     ): void
     {
-        // end_date > start_search && start_date <= end_search
+        // end_date > start_search && start_date < end_search
         $queryBuilder = $this->reservationRepository->createQueryBuilderWithMainAlias();
         $queryBuilder
             ->where($queryBuilder->expr()->eq('o.room', ':room'))
             ->andWhere($queryBuilder->expr()->gt('o.checkout', ':checkin'))
-            ->andWhere($queryBuilder->expr()->lte('o.checkin', ':checkout'))
+            ->andWhere($queryBuilder->expr()->lt('o.checkin', ':checkout'))
             ->setParameters([
                 'room' => $room,
                 'checkin' => $checkin,
@@ -195,8 +198,27 @@ class ReservationService
         PaginatedRequestConfiguration $paginatedRequest
     ): PaginatorInterface
     {
+        $queryBuilder = $this->reservationRepository->createQueryBuilderWithMainAlias();
+
         $paginatedRequest->addCriteria('room', $room);
 
-        return $this->reservationRepository->findAllByPaginatedRequest($paginatedRequest);
+        $criteria = $paginatedRequest->getCriteria();
+        if (isset($criteria['from'])) {
+            $queryBuilder
+                ->andWhere('o.checkin >= :from OR o.checkout >= :from')
+                ->setParameter('from', $criteria['from']);
+        }
+        if (isset($criteria['to'])) {
+            $queryBuilder
+                ->andWhere('o.checkin <= :to OR o.checkout <= :to')
+                ->setParameter('to', $criteria['to']);
+        }
+
+        return  $this->reservationRepository->createPaginator(
+            $paginatedRequest->getPage(),
+            $paginatedRequest->getCriteria(),
+            $paginatedRequest->getSorting(),
+            $queryBuilder
+        );
     }
 }

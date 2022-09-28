@@ -94,7 +94,7 @@ abstract class RequestArgumentResolverAbstract implements ArgumentValueResolverI
 
     protected function getArrayQueryParameter(Request $request, string $key, array $defaultValue = null): ?array
     {
-        $value = $request->query->get($key);
+        $value = $request->query->all($key);
 
         if (!is_array($value)) {
 
