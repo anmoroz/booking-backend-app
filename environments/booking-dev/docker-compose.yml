@@ -17,7 +17,7 @@ services:
       - "host.docker.internal:host-gateway"
     environment:
       SERVICE_NAME: php
-      SERVICE_TAGS: dev
+      SERVICE_TAGS: booking-dev
       PHP_IDE_CONFIG: "serverName=Docker"
     working_dir: /var/www/booking-backend-app
     networks:
