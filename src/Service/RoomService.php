@@ -13,6 +13,7 @@ namespace App\Service;
 use App\Core\Model\PaginatedRequestConfiguration;
 use App\Core\Service\Pagination\PaginatorInterface;
 use App\Entity\Room;
+use App\Model\RoomDetails;
 use App\Repository\RoomRepository;
 
 class RoomService
@@ -22,6 +23,39 @@ class RoomService
         private UserService    $userService
     )
     {
+    }
+
+    /**
+     * @param Room $room
+     * @param RoomDetails $roomDetails
+     * @return Room
+     */
+    public function update(Room $room, RoomDetails $roomDetails): Room
+    {
+        $room
+            ->setName($roomDetails->getName())
+            ->setAddress($roomDetails->getAddress());
+
+        $this->roomRepository->add($room, true);
+
+        return $room;
+    }
+
+    /**
+     * @param RoomDetails $roomDetails
+     * @return Room
+     */
+    public function create(RoomDetails $roomDetails): Room
+    {
+        $room = new Room();
+        $room
+            ->setUser($this->userService->getCurrentUser())
+            ->setName($roomDetails->getName())
+            ->setAddress($roomDetails->getAddress());
+
+        $this->roomRepository->add($room, true);
+
+        return $room;
     }
 
     /**

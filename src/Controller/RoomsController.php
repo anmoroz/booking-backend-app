@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Core\Model\PaginatedRequestConfiguration;
 use App\Model\ReservationDetails;
+use App\Model\RoomDetails;
 use App\Model\RoomDTO;
 use App\Service\ReservationService;
 use App\Service\RoomService;
@@ -23,12 +24,28 @@ class RoomsController extends AbstractController
     {
     }
 
-    #[Route('/', name: 'list')]
+    #[Route('', methods: ['GET', 'HEAD'], name: 'list')]
     public function list(PaginatedRequestConfiguration $requestConfiguration): JsonResponse
     {
         $paginator = $this->roomService->findAllByPaginatedRequest($requestConfiguration);
 
         return $this->json($paginator, Response::HTTP_OK, [], ['groups' => 'list']);
+    }
+
+    #[Route('', methods: ['POST'], name: 'create')]
+    public function create(RoomDetails $roomDetails): JsonResponse
+    {
+        $room = $this->roomService->create($roomDetails);
+
+        return $this->json($room, Response::HTTP_OK, [], ['groups' => 'show']);
+    }
+
+    #[Route('/{id}', methods: ['PUT'], name: 'update')]
+    public function update(RoomDTO $roomDTO, RoomDetails $roomDetails): JsonResponse
+    {
+        $room = $this->roomService->update($roomDTO->getRoom(), $roomDetails);
+
+        return $this->json($room, Response::HTTP_OK, [], ['groups' => 'show']);
     }
 
     #[Route('/{id}', methods: ['GET', 'HEAD'], name: 'show')]
