@@ -25,6 +25,8 @@ class ContactDetails
 
     private string $note = '';
 
+    private bool $isBanned = false;
+
     /**
      * @param string|null $phone
      * @param string|null $name
@@ -59,5 +61,21 @@ class ContactDetails
     public function getNote(): string
     {
         return $this->note;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isBanned(): bool
+    {
+        return $this->isBanned;
+    }
+
+    /**
+     * @param bool $isBanned
+     */
+    public function setIsBanned(bool $isBanned): void
+    {
+        $this->isBanned = $isBanned;
     }
 }

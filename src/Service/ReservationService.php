@@ -24,7 +24,8 @@ class ReservationService
 {
     public function __construct(
         private ReservationRepository $reservationRepository,
-        private ContactRepository $contactRepository
+        private ContactRepository $contactRepository,
+        private ContactService $contactService
     )
     {
     }
@@ -102,13 +103,13 @@ class ReservationService
         if (!is_null($contactDetails)) {
             $contact = $this->contactRepository->findOneByPhone($contactDetails->getPhone());
             if (!$contact) {
-                $contact = new Contact();
-                $contact->setCreatedAtNow();
+                $contact = $this->contactService->create($contactDetails);
             }
 
             $contact
                 ->setPhone($contactDetails->getPhone())
-                ->setName($contactDetails->getName());
+                ->setName($contactDetails->getName())
+                ->setNote($contactDetails->getNote());
         }
 
         $reservation = new Reservation();
