@@ -43,10 +43,27 @@ class ContactService
      */
     public function findAllByPaginatedRequest(PaginatedRequestConfiguration $paginatedRequest): PaginatorInterface
     {
+        $queryBuilder = $this->contactRepository->createQueryBuilderWithMainAlias();
         $currentUser = $this->userService->getCurrentUser();
         $paginatedRequest->addCriteria('user', $currentUser);
 
-        return $this->contactRepository->findAllByPaginatedRequest($paginatedRequest);
+        $searchTerm = $paginatedRequest->getCriteriaKeyword();
+        if ($searchTerm) {
+            $queryBuilder
+                ->andWhere('
+                    o.name LIKE :searchTerm 
+                    OR o.phone LIKE :searchTerm
+                ')
+                ->setParameter('searchTerm', '%'.$searchTerm.'%');
+
+        }
+
+        return $this->contactRepository->createPaginator(
+            $paginatedRequest->getPage(),
+            $paginatedRequest->getCriteria(),
+            $paginatedRequest->getSorting(),
+            $queryBuilder
+        );
     }
 
     /**
