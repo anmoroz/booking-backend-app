@@ -24,39 +24,40 @@ class Reservation implements EntityInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["show", "list"])]
+    #[Groups(["reservation.show", "reservation.list", "contact.list"])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["contact.list"])]
     private ?Room $room = null;
 
     #[ORM\ManyToOne(inversedBy: 'reservations', cascade: ["persist"])]
-    #[Groups(["show", "list"])]
+    #[Groups(["reservation.show", "reservation.list"])]
     private ?Contact $contact = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Groups(["show", "list"])]
+    #[Groups(["reservation.show", "reservation.list", "contact.list"])]
     private ?DateTimeInterface $checkin = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Groups(["show", "list"])]
+    #[Groups(["reservation.show", "reservation.list", "contact.list"])]
     private ?DateTimeInterface $checkout = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(["show", "list"])]
+    #[Groups(["reservation.show", "reservation.list", "contact.list"])]
     private ?string $note = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
-    #[Groups(["show", "list"])]
+    #[Groups(["reservation.show", "reservation.list", "contact.list"])]
     private ?int $adults = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
-    #[Groups(["show", "list"])]
+    #[Groups(["reservation.show", "reservation.list", "contact.list"])]
     private ?int $children = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(["show", "list"])]
+    #[Groups(["reservation.show", "reservation.list"])]
     private ?DateTimeInterface $createdAt = null;
 
     public function getId(): ?int

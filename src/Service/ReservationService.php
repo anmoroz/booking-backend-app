@@ -18,13 +18,11 @@ use App\Entity\Contact;
 use App\Entity\Room;
 use App\Model\ReservationDetails;
 use App\Repository\ReservationRepository;
-use App\Repository\ContactRepository;
 
 class ReservationService
 {
     public function __construct(
         private ReservationRepository $reservationRepository,
-        private ContactRepository $contactRepository,
         private ContactService $contactService
     )
     {
@@ -69,7 +67,7 @@ class ReservationService
         }
 
         if ($contactDetails) {
-            $contact = $this->contactRepository->findOneByPhone($contactDetails->getPhone());
+            $contact = $this->contactService->findOneByPhone($contactDetails->getPhone());
             if (!$contact) {
                 throw new ValidationException('Контактное лицо с таким телефоном не найдено');
             }
@@ -101,7 +99,7 @@ class ReservationService
         $contact = null;
         $contactDetails = $reservationDetails->getContactDetails();
         if (!is_null($contactDetails)) {
-            $contact = $this->contactRepository->findOneByPhone($contactDetails->getPhone());
+            $contact = $this->contactService->findOneByPhone($contactDetails->getPhone());
             if (!$contact) {
                 $contact = $this->contactService->create($contactDetails);
             }

@@ -33,13 +33,18 @@ class ContactsController extends AbstractController
     {
         $paginator = $this->contactService->findAllByPaginatedRequest($requestConfiguration);
 
-        return $this->json($paginator, Response::HTTP_OK, [], ['groups' => 'list']);
+        return $this->json($paginator, Response::HTTP_OK, [], ['groups' => ['list', 'contact.list']]);
     }
 
     #[Route('/{id}', methods: ['GET', 'HEAD'], name: 'show')]
     public function show(ContactDTO $contactDTO): JsonResponse
     {
-        return $this->json($contactDTO->getContact(), Response::HTTP_OK, [], ['groups' => 'show']);
+        return $this->json(
+            $contactDTO->getContact(),
+            Response::HTTP_OK,
+            [],
+            ['groups' => ['show', 'contact.list']]
+        );
     }
 
     #[Route('', methods: ['POST'], name: 'create')]
@@ -47,7 +52,7 @@ class ContactsController extends AbstractController
     {
         $contact = $this->contactService->create($contactDetails);
 
-        return $this->json($contact, Response::HTTP_OK, [], ['groups' => 'show']);
+        return $this->json($contact, Response::HTTP_OK, [], ['groups' => ['show', 'contact.list']]);
     }
 
     #[Route('/{id}', methods: ['PUT'], name: 'update')]
@@ -55,6 +60,6 @@ class ContactsController extends AbstractController
     {
         $contact = $this->contactService->update($contactDTO->getContact(), $contactDetails);
 
-        return $this->json($contact, Response::HTTP_OK, [], ['groups' => 'show']);
+        return $this->json($contact, Response::HTTP_OK, [], ['groups' => ['show', 'contact.list']]);
     }
 }

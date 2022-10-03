@@ -15,6 +15,7 @@ use App\Core\Service\Pagination\PaginatorInterface;
 use App\Entity\Contact;
 use App\Model\ContactDetails;
 use App\Repository\ContactRepository;
+use Doctrine\ORM\Query\Expr\Join;
 
 class ContactService
 {
@@ -44,6 +45,17 @@ class ContactService
     public function findAllByPaginatedRequest(PaginatedRequestConfiguration $paginatedRequest): PaginatorInterface
     {
         $queryBuilder = $this->contactRepository->createQueryBuilderWithMainAlias();
+        $queryBuilder->select(['o', 'lastReservation']);
+        $queryBuilder->leftJoin(
+            'o.reservations',
+            'lastReservation',
+            Join::WITH,
+            'o.id = lastReservation.contact AND lastReservation.checkin = (
+                SELECT MAX(r2.checkin)
+                FROM \App\Entity\Reservation AS r2
+                WHERE r2.contact = o.id
+            )'
+        );
         $currentUser = $this->userService->getCurrentUser();
         $paginatedRequest->addCriteria('user', $currentUser);
 
@@ -82,6 +94,18 @@ class ContactService
         $this->contactRepository->add($contact, true);
 
         return $contact;
+    }
+
+    /**
+     * @param string $phone
+     * @return Contact|null
+     */
+    public function findOneByPhone(string $phone): ?Contact
+    {
+        return $this->contactRepository->findOneByPhone(
+            $phone,
+            $this->userService->getCurrentUser()
+        );
     }
 
     /**

@@ -19,41 +19,46 @@ use DateTimeInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ContactRepository::class)]
+#[ORM\Index(name: "CONTACT_PHONE_IDX", columns: ["phone"])]
 #[ORM\Index(name: "CONTACT_NAME_IDX", columns: ["name"])]
+#[ORM\Index(name: "CONTACT_PHONE_USER_IDX", columns: ["phone", "user_id"])]
 class Contact implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["show", "list"])]
+    #[Groups(["contact.show", "contact.list"])]
     private ?int $id = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\Column(length: 12, unique: true)]
-    #[Groups(["show", "list"])]
+    #[ORM\Column(length: 12)]
+    #[Groups(["contact.show", "contact.list"])]
     private ?string $phone = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["show", "list"])]
+    #[Groups(["contact.show", "contact.list"])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(["show", "list"])]
+    #[Groups(["contact.show", "contact.list"])]
     private string $note = '';
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(["show", "list"])]
+    #[Groups(["contact.show", "contact.list"])]
     private ?DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::BOOLEAN)]
-    #[Groups(["show", "list"])]
+    #[Groups(["contact.show", "list"])]
     private bool $isBanned = false;
 
     #[ORM\OneToMany(mappedBy: 'contact', targetEntity: Reservation::class)]
     private Collection $reservations;
+
+    #[Groups(["contact.list"])]
+    private ?Reservation $lastReservation = null;
 
     public function __construct()
     {
@@ -169,5 +174,26 @@ class Contact implements EntityInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @return Reservation|null
+     */
+    public function getLastReservation(): ?Reservation
+    {
+        $lastReservation = $this->reservations->last();
+        if ($lastReservation) {
+            $this->lastReservation = $lastReservation;
+        }
+
+        return $this->lastReservation;
+    }
+
+    /**
+     * @param Reservation|null $lastReservation
+     */
+    public function setLastReservation(?Reservation $lastReservation): void
+    {
+        $this->lastReservation = $lastReservation;
     }
 }

@@ -29,7 +29,7 @@ class RoomsController extends AbstractController
     {
         $paginator = $this->roomService->findAllByPaginatedRequest($requestConfiguration);
 
-        return $this->json($paginator, Response::HTTP_OK, [], ['groups' => 'list']);
+        return $this->json($paginator, Response::HTTP_OK, [], ['groups' => ['contact.show', 'list']]);
     }
 
     #[Route('', methods: ['POST'], name: 'create')]
@@ -37,7 +37,7 @@ class RoomsController extends AbstractController
     {
         $room = $this->roomService->create($roomDetails);
 
-        return $this->json($room, Response::HTTP_OK, [], ['groups' => 'show']);
+        return $this->json($room, Response::HTTP_OK, [], ['groups' => ['show']]);
     }
 
     #[Route('/{id}', methods: ['PUT'], name: 'update')]
@@ -45,13 +45,13 @@ class RoomsController extends AbstractController
     {
         $room = $this->roomService->update($roomDTO->getRoom(), $roomDetails);
 
-        return $this->json($room, Response::HTTP_OK, [], ['groups' => 'show']);
+        return $this->json($room, Response::HTTP_OK, [], ['groups' => ['show']]);
     }
 
     #[Route('/{id}', methods: ['GET', 'HEAD'], name: 'show')]
     public function show(RoomDTO $roomDTO): JsonResponse
     {
-        return $this->json($roomDTO->getRoom(), Response::HTTP_OK, [], ['groups' => 'show']);
+        return $this->json($roomDTO->getRoom(), Response::HTTP_OK, [], ['groups' => ['reservation.list',  'show']]);
     }
 
     #[Route('/{id}/reservations', methods: ['GET', 'HEAD'], name: 'reservations')]
@@ -65,7 +65,12 @@ class RoomsController extends AbstractController
             $requestConfiguration
         );
 
-        return $this->json($paginator, Response::HTTP_OK, [], ['groups' => 'list']);
+        return $this->json(
+            $paginator,
+            Response::HTTP_OK,
+            [],
+            ['groups' => ['reservation.list', 'contact.show', 'list']]
+        );
     }
 
     #[Route('/{id}/reservations', methods: ['POST'], name: 'reservations.create')]
@@ -76,7 +81,12 @@ class RoomsController extends AbstractController
     {
         $reservation = $this->reservationService->create($roomDTO->getRoom(), $reservationDetails);
 
-        return $this->json($reservation, Response::HTTP_OK, [], ['groups' => 'show']);
+        return $this->json(
+            $reservation,
+            Response::HTTP_OK,
+            [],
+            ['groups' => ['reservation.list', 'contact.show',  'show']]
+        );
     }
 
     #[Route('/{id}/reservations/{reservationId}', methods: ['PUT'], name: 'reservations.update')]
@@ -93,7 +103,12 @@ class RoomsController extends AbstractController
 
         $this->reservationService->update($roomDTO->getRoom(), $reservation, $reservationDetails);
 
-        return $this->json($reservation, Response::HTTP_OK, [], ['groups' => 'show']);
+        return $this->json(
+            $reservation,
+            Response::HTTP_OK,
+            [],
+            ['groups' => ['reservation.list', 'contact.show',  'show']]
+        );
     }
 
     #[Route('/{id}/reservations/{reservationId}', methods: ['DELETE'], name: 'reservations.delete')]

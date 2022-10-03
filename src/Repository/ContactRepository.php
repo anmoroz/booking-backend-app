@@ -11,6 +11,7 @@ namespace App\Repository;
 
 use App\Core\Repository\EntityRepositoryAbstract;
 use App\Entity\Contact;
+use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -30,10 +31,11 @@ class ContactRepository extends EntityRepositoryAbstract
 
     /**
      * @param string $phone
+     * @param User $user
      * @return Contact|null
      */
-    public function findOneByPhone(string $phone): ?Contact
+    public function findOneByPhone(string $phone, User $user): ?Contact
     {
-        return $this->findOneBy(['phone' => $phone]);
+        return $this->findOneBy(['phone' => $phone, 'user' => $user]);
     }
 }
