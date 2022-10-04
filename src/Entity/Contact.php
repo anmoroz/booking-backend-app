@@ -27,7 +27,7 @@ class Contact implements EntityInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["contact.show", "contact.list"])]
+    #[Groups(["contact.show", "contact.list", "reservation.list"])]
     private ?int $id = null;
 
     #[ORM\ManyToOne]
@@ -35,15 +35,15 @@ class Contact implements EntityInterface
     private ?User $user = null;
 
     #[ORM\Column(length: 12)]
-    #[Groups(["contact.show", "contact.list"])]
+    #[Groups(["contact.show", "contact.list", "reservation.list"])]
     private ?string $phone = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["contact.show", "contact.list"])]
+    #[Groups(["contact.show", "contact.list", "reservation.list"])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(["contact.show", "contact.list"])]
+    #[Groups(["contact.show", "contact.list", "reservation.list"])]
     private string $note = '';
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -51,7 +51,7 @@ class Contact implements EntityInterface
     private ?DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::BOOLEAN)]
-    #[Groups(["contact.show", "list"])]
+    #[Groups(["contact.show", "list", "reservation.list"])]
     private bool $isBanned = false;
 
     #[ORM\OneToMany(mappedBy: 'contact', targetEntity: Reservation::class)]

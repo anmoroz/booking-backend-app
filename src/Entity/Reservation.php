@@ -29,7 +29,7 @@ class Reservation implements EntityInterface
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["contact.list"])]
+    #[Groups(["contact.list", "reservation.list"])]
     private ?Room $room = null;
 
     #[ORM\ManyToOne(inversedBy: 'reservations', cascade: ["persist"])]

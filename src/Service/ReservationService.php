@@ -18,14 +18,69 @@ use App\Entity\Contact;
 use App\Entity\Room;
 use App\Model\ReservationDetails;
 use App\Repository\ReservationRepository;
+use Doctrine\ORM\Query\Expr\Join;
 
 class ReservationService
 {
     public function __construct(
         private ReservationRepository $reservationRepository,
-        private ContactService $contactService
+        private ContactService $contactService,
+        private UserService $userService
     )
     {
+    }
+
+    /**
+     * @param PaginatedRequestConfiguration $paginatedRequest
+     * @return PaginatorInterface
+     */
+    public function findAllByPaginatedRequest(PaginatedRequestConfiguration $paginatedRequest): PaginatorInterface
+    {
+        $queryBuilder = $this->reservationRepository->createQueryBuilderWithMainAlias();
+        $queryBuilder
+            ->andWhere('o.contact IS NOT NULL')
+            ->orderBy('o.checkin', 'DESC');
+        $queryBuilder
+            ->innerJoin(
+                'o.room',
+                'room',
+                Join::WITH
+            )
+            ->andWhere($queryBuilder->expr()->eq('room.user', ':user'))
+            ->setParameter('user', $this->userService->getCurrentUser());
+
+        $queryBuilder->leftJoin('o.contact', 'contact');
+
+        $searchTerm = $paginatedRequest->getCriteriaKeyword();
+        if ($searchTerm) {
+            $queryBuilder
+                ->andWhere('
+                    contact.name LIKE :searchTerm 
+                    OR contact.phone LIKE :searchTerm
+                ')
+                ->setParameter('searchTerm', '%'.$searchTerm.'%');
+
+        }
+
+        $criteria = $paginatedRequest->getCriteria();
+        if (isset($criteria['from'])) {
+            $queryBuilder
+                ->andWhere('o.checkin >= :from')
+                ->setParameter('from', $criteria['from']);
+        }
+        if (isset($criteria['to'])) {
+            $queryBuilder
+                ->andWhere('o.checkin <= :to')
+                ->setParameter('to', $criteria['to']);
+        }
+
+
+        return  $this->reservationRepository->createPaginator(
+            $paginatedRequest->getPage(),
+            $paginatedRequest->getCriteria(),
+            $paginatedRequest->getSorting(),
+            $queryBuilder
+        );
     }
 
     /**

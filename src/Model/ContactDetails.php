@@ -15,12 +15,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 class ContactDetails
 {
     #[Assert\Sequentially([
-        new Assert\NotBlank(message: "Введите телефон гостя"),
+        new Assert\NotBlank(message: "Введите телефон"),
         new Assert\Regex('/^\d{10}$/', message: 'Номер телефона должен состоять из 10 цифр')
     ])]
     private ?string $phone = null;
 
-    #[Assert\NotBlank(message: "Введите имя гостя")]
+    #[Assert\NotBlank(message: "Введите имя")]
     private ?string $name = null;
 
     private string $note = '';

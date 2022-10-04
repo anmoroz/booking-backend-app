@@ -22,15 +22,15 @@ class Room implements EntityInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["show", "list"])]
+    #[Groups(["list", "room.list", "reservation.list"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["show", "list"])]
+    #[Groups(["list", "room.list", "reservation.list"])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["show", "list"])]
+    #[Groups(["list", "room.list", "reservation.list"])]
     private ?string $address = null;
 
     #[ORM\ManyToOne(inversedBy: 'rooms')]
