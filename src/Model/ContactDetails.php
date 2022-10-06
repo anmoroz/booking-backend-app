@@ -16,7 +16,7 @@ class ContactDetails
 {
     #[Assert\Sequentially([
         new Assert\NotBlank(message: "Введите телефон"),
-        new Assert\Regex('/^\d{10}$/', message: 'Номер телефона должен состоять из 10 цифр')
+        new Assert\Regex('/^\d{11}$/', message: 'Номер телефона должен состоять из 10 цифр')
     ])]
     private ?string $phone = null;
 
