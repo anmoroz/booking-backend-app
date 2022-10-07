@@ -36,6 +36,12 @@ class ReservationDetails
     ])]
     private ?int $children;
 
+    #[Assert\Sequentially([
+        new Assert\Type('float', message: 'Цена должна быть числом'),
+        new Assert\GreaterThanOrEqual(0, message: 'Цена должна быть больше нуля')
+    ])]
+    private ?float $price = null;
+
     private ?ContactDetails $contactDetails = null;
 
     private string $note = '';
@@ -96,12 +102,11 @@ class ReservationDetails
 
     /**
      * @param ContactDetails|null $contactDetails
-     * @return ReservationDetails
+     * @return void
      */
-    public function setContactDetails(?ContactDetails $contactDetails): ReservationDetails
+    public function setContactDetails(?ContactDetails $contactDetails): void
     {
         $this->contactDetails = $contactDetails;
-        return $this;
     }
 
     /**
@@ -118,6 +123,23 @@ class ReservationDetails
     public function setNote(string $note): void
     {
         $this->note = $note;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getPrice(): ?float
+    {
+        return $this->price;
+    }
+
+    /**
+     * @param float|null $price
+     * @return void
+     */
+    public function setPrice(?float $price): void
+    {
+        $this->price = $price;
     }
 
     #[Assert\Callback(groups: ['close_reservation'])]

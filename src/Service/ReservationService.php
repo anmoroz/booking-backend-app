@@ -178,13 +178,13 @@ class ReservationService
     }
 
     /**
-     * @param $reservation
+     * @param Reservation $reservation
      * @param ReservationDetails $reservationDetails
      * @param Contact|null $contact
      * @return void
      */
     private function updateReservationAttributes(
-        $reservation,
+        Reservation $reservation,
         ReservationDetails $reservationDetails,
         ?Contact $contact
     ): void
@@ -194,6 +194,7 @@ class ReservationService
         }
 
         $reservation
+            ->setPrice($reservationDetails->getPrice())
             ->setCheckin($reservationDetails->getCheckin())
             ->setCheckout($reservationDetails->getCheckout())
             ->setAdults($contact ? $reservationDetails->getAdults() : 0)

@@ -36,6 +36,10 @@ class Reservation implements EntityInterface
     #[Groups(["reservation.show", "reservation.list"])]
     private ?Contact $contact = null;
 
+    #[ORM\Column(type: Types::DECIMAL, scale: 2, precision: 9, nullable: true)]
+    #[Groups(["reservation.show", "reservation.list", "contact.list"])]
+    private ?float $price = null;
+
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Groups(["reservation.show", "reservation.list", "contact.list"])]
     private ?DateTimeInterface $checkin = null;
@@ -73,6 +77,29 @@ class Reservation implements EntityInterface
     public function setContact(?Contact $contact): Reservation
     {
         $this->contact = $contact;
+
+        return $this;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getPrice(): ?float
+    {
+        return $this->price;
+    }
+
+    /**
+     * @param float|null $price
+     * @return Reservation
+     */
+    public function setPrice(?float $price): Reservation
+    {
+        if ($price === 0.0) {
+            $price = null;
+        }
+
+        $this->price = $price;
 
         return $this;
     }

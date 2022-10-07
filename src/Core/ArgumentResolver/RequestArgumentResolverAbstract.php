@@ -39,6 +39,18 @@ abstract class RequestArgumentResolverAbstract implements ArgumentValueResolverI
         return $value;
     }
 
+    protected function getNumberParameter(Request $request, string $key, ?float $defaultValue = null): ?float
+    {
+        $value = $request->get($key, $defaultValue);
+
+        if (!is_numeric($value) && !is_null($value)) {
+
+            return $defaultValue;
+        }
+
+        return (float) $value;
+    }
+
     protected function getIntegerParameter(Request $request, string $key, int $defaultValue = null): ?int
     {
         $value = $request->get($key);

@@ -48,8 +48,7 @@ class ReservationDetailsResolver extends RequestArgumentResolverAbstract
         $reservationDetails = new  ReservationDetails($checkin, $checkout, $adults, $children);
 
         $reservationDetails->setNote($this->getStringParameter($request, 'note', ''));
-
-
+        $reservationDetails->setPrice($this->getNumberParameter($request, 'price'));
 
         $contactData = $this->getArrayParameter($request, 'contact');
         if (!is_null($contactData)) {
