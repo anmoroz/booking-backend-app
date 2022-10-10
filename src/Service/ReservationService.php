@@ -53,13 +53,19 @@ class ReservationService
 
         $searchTerm = $paginatedRequest->getCriteriaKeyword();
         if ($searchTerm) {
-            $queryBuilder
-                ->andWhere('
-                    contact.name LIKE :searchTerm 
-                    OR contact.phone LIKE :searchTerm
-                ')
-                ->setParameter('searchTerm', '%'.$searchTerm.'%');
+            $orCondition  = $queryBuilder->expr()->orX(
+                $queryBuilder->expr()->like('contact.name', ':searchTerm'),
+                $queryBuilder->expr()->like('contact.phone', ':searchTerm')
+            );
+            $queryBuilder->setParameter('searchTerm', '%'.$searchTerm.'%');
 
+            $numberSearchTerm = preg_replace('/\D/', '', $searchTerm);
+            if ($numberSearchTerm) {
+                $orCondition->add($queryBuilder->expr()->like('contact.phone', ':numberSearchTerm'));
+                $queryBuilder->setParameter('numberSearchTerm', '%'.$numberSearchTerm.'%');
+            }
+
+            $queryBuilder->andWhere($orCondition);
         }
 
         $criteria = $paginatedRequest->getCriteria();
