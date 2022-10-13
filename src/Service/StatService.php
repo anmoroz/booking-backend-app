@@ -46,7 +46,7 @@ class StatService
             'SELECT
                     MONTH(checkin) as monthNumber,
                     SUM(DATEDIFF(checkout, checkin)) AS days,
-                    SUM(price) as amount
+                    SUM(price * (DATEDIFF(checkout, checkin))) as amount
                 FROM reservation
                 WHERE room_id = :roomId
                     AND contact_id IS NOT NULL
