@@ -21,7 +21,6 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class SecurityService
 {
-
     public function __construct(
         private UserRepository $userRepository,
         private UserPasswordHasherInterface $passwordHasher,
@@ -46,6 +45,22 @@ class SecurityService
         }
 
         return $this->createUserTokens($user);
+    }
+
+    /**
+     * @param string $refreshTokenStr
+     * @return UserTokens
+     * @throws Exception
+     */
+    public function refreshAccessToken(string $refreshTokenStr): UserTokens
+    {
+        $refreshToken = $this->refreshTokenRepository->findOneBy(['token' => $refreshTokenStr]);
+
+        if (!$refreshToken || !$refreshToken->isValid()) {
+            throw new Exception();
+        }
+
+        return $this->createUserTokens($refreshToken->getUser());
     }
 
     /**

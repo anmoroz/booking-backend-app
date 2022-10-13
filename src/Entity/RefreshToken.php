@@ -14,6 +14,7 @@ use App\Repository\RefreshTokenRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use DateTimeInterface;
+use DateTime;
 
 #[ORM\Entity(repositoryClass: RefreshTokenRepository::class)]
 class RefreshToken implements EntityInterface
@@ -74,5 +75,10 @@ class RefreshToken implements EntityInterface
         $this->expiresAt = $expiresAt;
 
         return $this;
+    }
+
+    public function isValid(): bool
+    {
+        return (new DateTime()) < $this->expiresAt;
     }
 }

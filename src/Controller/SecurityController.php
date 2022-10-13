@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\RefreshTokenDTO;
 use App\Security\UserCredentials;
 use App\Service\SecurityService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,6 +33,18 @@ class SecurityController extends AbstractController
             $userTokens = $this->securityService->authenticate($credentials);
         } catch (Exception) {
             throw new BadRequestHttpException('Неверные учетные данные');
+        }
+
+        return $this->json($userTokens, Response::HTTP_OK, [], ['groups' => 'show']);
+    }
+
+    #[Route('/refresh-token', methods: ['POST'], name: 'refresh-token')]
+    public function refreshToken(RefreshTokenDTO $refreshTokenDTO): JsonResponse
+    {
+        try {
+            $userTokens = $this->securityService->refreshAccessToken($refreshTokenDTO->getRefreshToken());
+        } catch (Exception) {
+            throw new BadRequestHttpException('Требуется авторизация');
         }
 
         return $this->json($userTokens, Response::HTTP_OK, [], ['groups' => 'show']);
