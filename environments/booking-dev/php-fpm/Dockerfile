@@ -3,12 +3,15 @@ ARG TIMEZONE
 
 COPY ./php-fpm/php.ini /usr/local/etc/php/conf.d/docker-php-config.ini
 
-RUN docker-php-ext-install pdo pdo_mysql
-
 RUN apk update && apk add --no-cache \
     bash \
     curl \
-   $PHPIZE_DEPS
+    zip \
+    libzip-dev \
+    $PHPIZE_DEPS
+
+RUN docker-php-ext-install pdo pdo_mysql zip
+RUN docker-php-ext-configure zip
 
 # Set timezone
 RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && echo ${TIMEZONE} > /etc/timezone \
