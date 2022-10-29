@@ -60,6 +60,10 @@ class ContactService
         $paginatedRequest->addCriteria('user', $currentUser);
 
         $searchTerm = $paginatedRequest->getCriteriaKeyword();
+
+        if (preg_match('/^[\d\(\)\-\s+]*$/', $searchTerm)) {
+            $searchTerm = preg_replace('/[\(\)\-\s+]/', '', $searchTerm);
+        }
         if ($searchTerm) {
             $queryBuilder
                 ->andWhere('
