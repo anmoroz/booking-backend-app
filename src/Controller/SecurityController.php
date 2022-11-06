@@ -44,7 +44,7 @@ class SecurityController extends AbstractController
         try {
             $userTokens = $this->securityService->refreshAccessToken($refreshTokenDTO->getRefreshToken());
         } catch (Exception) {
-            throw new BadRequestHttpException('Требуется авторизация');
+            throw new BadRequestHttpException('Invalid refreshToken');
         }
 
         return $this->json($userTokens, Response::HTTP_OK, [], ['groups' => 'show']);
