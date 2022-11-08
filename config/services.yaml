@@ -25,3 +25,8 @@ services:
         arguments:
             $secretKey: '%env(JWT_SECRET_KEY)%'
             $validTime: '%env(JWT_VALID_TIME)%'
+
+    App\Component\Mailer\Provider\DefaultSettingsProvider:
+        arguments:
+            $senderName: '%env(MAILER_SENDER_NAME)%'
+            $senderAddress: '%env(MAILER_SENDER_ADDRESS)%'

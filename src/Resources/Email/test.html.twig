@@ -1,0 +1,19 @@
+{% extends 'Email/layout.html.twig' %}
+
+{% block subject %}
+    Тестовое письмо
+{% endblock %}
+
+{% block footer %}
+    Тестовое письмо
+{% endblock %}
+
+{% block content %}
+    <div style="margin-bottom: 30px;">
+        Здравствуйте.
+        <div style="margin: 10px 0;">
+            <p><strong>Текущая конфигурация PHP:</strong></p>
+            <p>{{ phpinfo | raw}}</p>
+        </div>
+    </div>
+{% endblock %}

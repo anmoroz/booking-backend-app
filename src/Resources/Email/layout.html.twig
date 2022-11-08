@@ -1,0 +1,19 @@
+{% block body %}
+    {% autoescape false %}
+        <div style="font-family: sans-serif; background: #eee; padding-top: 30px; padding-bottom: 30px; font-size: 16px; color: #333; line-height: 1.5">
+            <div style="background: {{ navbarBackground ?? '#eee' }}; max-width: 600px; margin: 20px auto;">
+                <div>
+                    <img src="{{ absolute_url('/logo192.png') }}" alt="Logo" style="display: block; margin: 0 auto;">
+                </div>
+
+                <div style="background: #fff; padding: 40px 30px;">
+                    {% block content %}{% endblock %}
+                </div>
+
+                <div style="padding: 20px 0; text-align: center; color: #4E48A5; text-decoration: none;">
+                    {% block footer %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    {% endautoescape %}
+{% endblock %}

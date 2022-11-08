@@ -21,6 +21,7 @@ use DateTimeInterface;
 use DateTime;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityInterface
 {
     public const ROLE_USER = 'ROLE_USER';
@@ -35,6 +36,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
 
     #[ORM\Column(length: 90, unique: true)]
     private ?string $email = null;
+
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private bool $isVerified = false;
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
@@ -57,10 +61,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: RefreshToken::class, orphanRemoval: true)]
     private Collection $refreshTokens;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserCode::class, orphanRemoval: true, cascade: ["persist"])]
+    private Collection $userCodes;
+
     public function __construct()
     {
         $this->properties = new ArrayCollection();
         $this->refreshTokens = new ArrayCollection();
+        $this->userCodes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -88,6 +96,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    /**
+     * @param bool $isVerified
+     * @return User
+     */
+    public function setIsVerified(bool $isVerified): User
+    {
+        $this->isVerified = $isVerified;
 
         return $this;
     }
@@ -246,6 +273,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
             // set the owning side to null (unless already changed)
             if ($refreshToken->getUser() === $this) {
                 $refreshToken->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserCode>
+     */
+    public function getUserCodes(): Collection
+    {
+        return $this->userCodes;
+    }
+
+    public function addUserCode(UserCode $userCode): self
+    {
+        if (!$this->userCodes->contains($userCode)) {
+            $this->userCodes->add($userCode);
+            $userCode->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserCode(UserCode $userCode): self
+    {
+        if ($this->userCodes->removeElement($userCode)) {
+            // set the owning side to null (unless already changed)
+            if ($userCode->getUser() === $this) {
+                $userCode->setUser(null);
             }
         }
 

@@ -9,9 +9,11 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\EmailDTO;
 use App\Model\RefreshTokenDTO;
 use App\Security\UserCredentials;
 use App\Service\SecurityService;
+use App\Service\SignUpService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -48,5 +50,13 @@ class SecurityController extends AbstractController
         }
 
         return $this->json($userTokens, Response::HTTP_OK, [], ['groups' => 'show']);
+    }
+
+    #[Route('/sign-up', methods: ['POST'], name: 'sign-up')]
+    public function signUp(EmailDTO $emailDTO, SignUpService $signUpService): JsonResponse
+    {
+        $responseData = $signUpService->sendConfirmationEmail($emailDTO);
+
+        return $this->json($responseData, Response::HTTP_OK);
     }
 }

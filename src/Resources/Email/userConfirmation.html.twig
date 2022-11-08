@@ -1,0 +1,23 @@
+{% extends 'Email/layout.html.twig' %}
+
+{% block subject %}
+    Регистрация нового пользователя
+{% endblock %}
+
+{% block content %}
+    <div style="margin-bottom: 30px;">
+        Здравствуйте!
+        Вы получили это письмо, поскольку указали его при работе с сайтом {{ app.request.schemeAndHttpHost ~ app.request.baseUrl }}
+        Нам необходимо убедиться в том, что именно Вы являетесь владельцем этого e-mail адреса.
+        <div style="margin: 10px 0;">
+            Для подтверждения email введите код на странице регистрации:
+            <span style="border: 1px solid #eee; padding: 10px; color: #4E48A5; font-size: 19px; display: block;">
+                {{ code }}
+            </span>
+        </div>
+    </div>
+
+    <div style="margin-bottom: 30px; font-size: 13px;">
+        Это письмо было отправлено автоматически. Если Вы считаете, что получили его по ошибке, просто проигнорируйте его.
+    </div>
+{% endblock %}

@@ -78,6 +78,7 @@ class UserCreateCommand extends Command
         $user
             ->setName($name)
             ->setEmail($email)
+            ->setIsVerified(true)
             ->setPhone($phone)
             ->setPassword($this->passwordHasher->hashPassword($user, $password))
             ->setRoles([User::ROLE_USER])

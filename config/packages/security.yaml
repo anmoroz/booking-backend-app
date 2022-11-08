@@ -30,6 +30,7 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/api/v1/security/sign-up, roles: PUBLIC_ACCESS }
         - { path: ^/api/v1/security/authenticate, roles: PUBLIC_ACCESS }
         - { path: ^/api/v1/security/refresh-token, roles: PUBLIC_ACCESS }
         - { path: ^/api/v1, roles: IS_AUTHENTICATED_FULLY }
