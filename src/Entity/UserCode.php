@@ -14,6 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 use DateTime;
 
 #[ORM\Entity(repositoryClass: UserCodeRepository::class)]
+#[ORM\Index(name: "USER_CODE_CODE_IDX", columns: ["code"])]
 #[ORM\HasLifecycleCallbacks]
 class UserCode implements EntityInterface
 {

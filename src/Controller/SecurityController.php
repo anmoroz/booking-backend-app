@@ -11,6 +11,8 @@ namespace App\Controller;
 
 use App\Model\EmailDTO;
 use App\Model\RefreshTokenDTO;
+use App\Model\Security\ConfirmDataDTO;
+use App\Model\Security\VerifyCodeDTO;
 use App\Security\UserCredentials;
 use App\Service\SecurityService;
 use App\Service\SignUpService;
@@ -58,5 +60,21 @@ class SecurityController extends AbstractController
         $responseData = $signUpService->sendConfirmationEmail($emailDTO);
 
         return $this->json($responseData, Response::HTTP_OK);
+    }
+
+    #[Route('/sign-up/verify', methods: ['POST'], name: 'verify')]
+    public function verify(VerifyCodeDTO $verifyCodeDTO, SignUpService $signUpService): JsonResponse
+    {
+        $responseData = $signUpService->verify($verifyCodeDTO->getUserCode());
+
+        return $this->json($responseData, Response::HTTP_OK);
+    }
+
+    #[Route('/sign-up/confirm', methods: ['POST'], name: 'confirm')]
+    public function confirm(ConfirmDataDTO $confirmDataDTO, SignUpService $signUpService): JsonResponse
+    {
+        $userTokens = $signUpService->confirm($confirmDataDTO);
+
+        return $this->json($userTokens, Response::HTTP_OK);
     }
 }

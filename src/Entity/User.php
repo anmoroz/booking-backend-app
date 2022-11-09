@@ -31,14 +31,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 12, unique: true)]
+    #[ORM\Column(length: 12, unique: true, nullable: true)]
     private ?string $phone = null;
 
     #[ORM\Column(length: 90, unique: true)]
     private ?string $email = null;
 
-    #[ORM\Column(type: Types::BOOLEAN)]
+    #[ORM\Column(type: Types::BOOLEAN, columnDefinition: "TINYINT(1) NOT NULL DEFAULT 0")]
     private bool $isVerified = false;
+
+    #[ORM\Column(type: Types::BOOLEAN, columnDefinition: "TINYINT(1) NOT NULL DEFAULT 0")]
+    private bool $isRegistrationCompleted = false;
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
@@ -115,6 +118,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
     public function setIsVerified(bool $isVerified): User
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRegistrationCompleted(): bool
+    {
+        return $this->isRegistrationCompleted;
+    }
+
+    /**
+     * @param bool $isRegistrationCompleted
+     * @return User
+     */
+    public function setIsRegistrationCompleted(bool $isRegistrationCompleted): User
+    {
+        $this->isRegistrationCompleted = $isRegistrationCompleted;
 
         return $this;
     }

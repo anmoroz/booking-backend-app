@@ -23,8 +23,22 @@ class UserCodeRepository extends  EntityRepositoryAbstract
         parent::__construct($registry, UserCode::class);
     }
 
+    /**
+     * @param User $user
+     * @param int $type
+     * @return UserCode|null
+     */
     public function findByUserAndType(User $user, int $type): ?UserCode
     {
         return $this->findOneBy(['user' => $user, 'type' => $type]);
+    }
+
+    /**
+     * @param string $code
+     * @return UserCode|null
+     */
+    public function findOneByCode(string $code): ?UserCode
+    {
+        return $this->findOneBy(['code' => $code]);
     }
 }

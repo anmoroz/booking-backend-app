@@ -48,6 +48,20 @@ class SecurityService
     }
 
     /**
+     * @param User $user
+     * @return UserTokens
+     * @throws Exception
+     */
+    public function authenticateByCode(User $user): UserTokens
+    {
+        if ($user->isVerified() === false || $user->isRegistrationCompleted() === false) {
+            throw new Exception();
+        }
+
+        return $this->createUserTokens($user);
+    }
+
+    /**
      * @param string $refreshTokenStr
      * @return UserTokens
      * @throws Exception
@@ -67,7 +81,7 @@ class SecurityService
      * @param User $user
      * @return UserTokens
      */
-    private function createUserTokens(User $user): UserTokens
+    public function createUserTokens(User $user): UserTokens
     {
         $accessToken = $this->jwtTokenProvider->generate($user);
         $refreshToken = $this->refreshTokenRepository->createByUser($user);
