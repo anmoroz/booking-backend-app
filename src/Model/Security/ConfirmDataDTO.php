@@ -17,12 +17,16 @@ class ConfirmDataDTO
     #[Assert\NotBlank(message: "Поле не должно иметь пустое значение")]
     private ?string $token = null;
 
-    #[Assert\NotBlank(message: "Введите пароль")]
-    #[Assert\Length(min: 8, minMessage: "Пароль должен содержать не менее 8-ти символов")]
+    #[Assert\Sequentially([
+        new Assert\NotBlank(message: "Введите пароль"),
+        new Assert\Length(min: 8, minMessage: "Пароль должен содержать не менее 8-ти символов")
+    ])]
     private ?string $password = null;
 
-    #[Assert\NotBlank(message: "Введите ваше имя")]
-    #[Assert\Length(max: 120, maxMessage: "Имя не должно превышать 120-ти символов")]
+    #[Assert\Sequentially([
+        new Assert\NotBlank(message: "Введите имя"),
+        new Assert\Length(max: 120, maxMessage: "Имя не должно превышать 120-ти символов")
+    ])]
     private ?string $name = null;
 
     /**

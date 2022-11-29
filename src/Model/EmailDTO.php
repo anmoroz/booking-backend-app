@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class EmailDTO
 {
     #[Assert\NotBlank(message: "Введите Email")]
-    #[Assert\Email(message: "Поле должно содержать валидное значение электронного адреса")]
+    #[Assert\Email(message: "Неверный электронный адрес")]
     private ?string $email = null;
 
     /**
